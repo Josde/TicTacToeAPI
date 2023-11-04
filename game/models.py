@@ -9,5 +9,6 @@ class Game(models.Model):
     # Podríamos separar esto en Game (la parte superior, datos sobre usuarios)
     # y GameState (la parte inferior, estado de la partida), para hacer cosas como guardar historiales completos jugada por jugada de cada partida. 
     # Sin embargo, lo dejo para el futuro.
-    board = models.CharField(max_length=constants.BOARD_SIZE**2)
-    turn = models.IntegerField()
+    board = models.CharField(max_length=constants.BOARD_SIZE**2, default="." * constants.BOARD_SIZE**2)
+    turn = models.IntegerField(default=1) # 1 = player 1, 2 = player 2
+    winner = models.IntegerField(default=0) # 0 = not finished, 1 = player 1, 2 = player 2
