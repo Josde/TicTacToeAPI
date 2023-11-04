@@ -35,3 +35,10 @@ class BoardTestCase(TestCase):
         self.assertTrue(game.can_place(board, 1, 1))
         game.place(board, 1, 1, constants.PLAYER_1_PIECE)
         self.assertFalse(game.can_place(board, 1, 1))
+    
+    def place_test(self):
+        board = "." * constants.BOARD_SIZE**2
+        game.place(board, 0, 0, constants.PLAYER_1_PIECE)
+        self.assertTrue(board[0] == constants.PLAYER_1_PIECE)
+        game.place(board, constants.BOARD_SIZE - 1, constants.BOARD_SIZE - 1, constants.PLAYER_2_PIECE)
+        self.assertTrue(board[constants.BOARD_SIZE**2 - 1] == constants.PLAYER_2_PIECE)
