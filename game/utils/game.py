@@ -1,4 +1,4 @@
-import constants
+from . import constants
 
 def convert_to_array(board : str):
     if len(board < constants.BOARD_SIZE ** 2):
@@ -10,9 +10,24 @@ def convert_to_array(board : str):
         
     return array
 
+def convert_to_string(board):
+    board_string = ""
+    for i in range(0, constants.BOARD_SIZE):
+        for j in range(0, constants.BOARD_SIZE):
+            board_string.append(board[i][j])
+    return board_string
+
 def can_place(board : str, x : int, y : int):
+    if (x > constants.BOARD_SIZE or x < 0 or y > constants.BOARD_SIZE or y < 0):
+        return False
     conv_board = convert_to_array(board)
     return conv_board[y][x] == constants.BLANK
+
+def place(board : str, x : int, y : int, player_piece : str):
+    if (can_place(board, x, y)):
+        conv_board = convert_to_array(board)
+        conv_board[y][x] = player_piece
+    return convert_to_string(conv_board)
     
 def check_victory(board : str, player_piece : str):
     """Comprueba si algún jugador ha ganado
