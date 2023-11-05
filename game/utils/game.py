@@ -1,11 +1,11 @@
 from . import constants
 
 def convert_to_array(board : str):
-    if len(board < constants.BOARD_SIZE ** 2):
+    if len(board) < constants.BOARD_SIZE ** 2:
         raise Exception("Board string is too small")
-    array = [ [] * 3 ]
+    array = [ [] for i in range(constants.BOARD_SIZE) ]
     for i in range(0, constants.BOARD_SIZE ** 2):
-        idx = i+1 // constants.BOARD_SIZE # El indice de la fila del array al que tenemos que añadir nuestro carácter.
+        idx = i // constants.BOARD_SIZE # El indice de la fila del array al que tenemos que añadir nuestro carácter.
         array[idx].append(board[i])
         
     return array
@@ -14,7 +14,7 @@ def convert_to_string(board):
     board_string = ""
     for i in range(0, constants.BOARD_SIZE):
         for j in range(0, constants.BOARD_SIZE):
-            board_string.append(board[i][j])
+            board_string += (board[i][j])
     return board_string
 
 def can_place(board : str, x : int, y : int):
@@ -48,7 +48,7 @@ def check_horizontals(board, player_piece : str):
     # 0 1 2 ->
     # 3 4 5 ->
     # 6 7 8 ->
-    return any(all(board[y][x] == player_piece for x in range(constants.BOARD_SIZE) for y in range(constants.BOARD_SIZE)))
+    return any(all(board[y][x] == player_piece for x in range(constants.BOARD_SIZE)) for y in range(constants.BOARD_SIZE))
 def check_verticals(board, player_piece : str):
     # Verticales:
     # 0 1 2 
@@ -57,7 +57,7 @@ def check_verticals(board, player_piece : str):
     # | | |
     # v v v
     # Lo mismo que check_horizontals pero cambiamos el orden de x e y para que vaya en vertical.
-    return any(all(board[y][x] == player_piece for y in range(constants.BOARD_SIZE) for x in range(constants.BOARD_SIZE)))
+    return any(all(board[y][x] == player_piece for y in range(constants.BOARD_SIZE)) for x in range(constants.BOARD_SIZE))
 
 def check_diagonals(board, player_piece : str):
     # Diagonales:
@@ -70,3 +70,4 @@ def check_diagonals(board, player_piece : str):
         return True
     if (all(board[i][constants.BOARD_SIZE - i - 1] == player_piece for i in range(constants.BOARD_SIZE))): 
         return True
+    return False

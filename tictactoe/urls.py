@@ -21,9 +21,10 @@ from game import views
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
-router.register(r'games', views.GameViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('games/', views.GameList.as_view()),
+    path('games/<int:id>', views.GameDetail.as_view()),
     path('admin/', admin.site.urls),
 ]
