@@ -1,8 +1,19 @@
 from . import constants
 
 def convert_to_array(board : str):
-    if len(board) < constants.BOARD_SIZE ** 2:
-        raise Exception("Board string is too small")
+    """Convierte un string al menos longitud constants.BOARD_SIZE^2 (es decir, el tamaño de nuestro tablero) a array bidimensional
+
+    Args:
+        board (str): La representación en string del tablero
+
+    Raises:
+        Exception: Puede lanzar una excepción si se le pasa un objeto que no sea string o si este string es demasiado pequeño
+
+    Returns:
+        array: Lista bidimensional que representa nuestro array, ya en la forma de tablero cuadriculado que esperariamos. 
+    """    
+    if len(board) < constants.BOARD_SIZE ** 2 or not isinstance(board, str):
+        raise Exception("Board string is too small or not a string.")
     array = [ [] for i in range(constants.BOARD_SIZE) ]
     for i in range(0, constants.BOARD_SIZE ** 2):
         idx = i // constants.BOARD_SIZE # El indice de la fila del array al que tenemos que añadir nuestro carácter.
@@ -10,26 +21,54 @@ def convert_to_array(board : str):
         
     return array
 
-def convert_to_string(board):
+def convert_to_string(board) -> str:
+    """Función inversa a convert_to_array
+
+    Args:
+        board (List[List[str]]): Array de array de strings, que representa el tablero en forma bidimensional.
+    Returns:
+        str: String que representa nuestro tablero de forma plana
+    """       
     board_string = ""
     for i in range(0, constants.BOARD_SIZE):
         for j in range(0, constants.BOARD_SIZE):
             board_string += (board[i][j])
     return board_string
 
-def can_place(board : str, x : int, y : int):
+def can_place(board : str, x : int, y : int) -> bool:
+    """Hace las comprobaciones necesarias para saber si se puede poner una ficha en determinado sitio del tablero.
+
+    Args:
+        board (str): Estado del tablero, como string
+        x (int): Posición X (horizontal) del tablero, empezando por la izquierda y por el 0.
+        y (int): Posición Y (vertical) del tablero, empezando por arriba y por el 0.
+
+    Returns:
+        bool: Verdadero si podemos poner ficha, falso si no.
+    """    
     if (x > constants.BOARD_SIZE or x < 0 or y > constants.BOARD_SIZE or y < 0):
         return False
     conv_board = convert_to_array(board)
     return conv_board[y][x] == constants.BLANK
 
-def place(board : str, x : int, y : int, player_piece : str):
+def place(board : str, x : int, y : int, player_piece : str) -> str:
+    """Pone una ficha en el tablero.
+
+    Args:
+        board (str): Estado del tablero, como string.
+        x (int): Posición X (horizontal) del tablero, empezando por la izquierda y por el 0.
+        y (int): Posición Y (vertical) del tablero, empezando por arriba y por el 0.
+        player_piece (str): El caracter que representa la ficha de nuestro jugador.
+
+    Returns:
+        str: El nuevo estado de nuestro tablero. Si no se puede poner ficha, simplemente es el estado original.
+    """    
+    conv_board = convert_to_array(board)
     if (can_place(board, x, y)):
-        conv_board = convert_to_array(board)
         conv_board[y][x] = player_piece
     return convert_to_string(conv_board)
     
-def check_victory(board : str, player_piece : str):
+def check_victory(board : str, player_piece : str) -> bool:
     """Comprueba si algún jugador ha ganado
 
     Args:
