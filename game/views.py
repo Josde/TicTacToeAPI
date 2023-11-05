@@ -65,6 +65,6 @@ class GameDetail(APIView):
         else: 
             return Response(status=status.HTTP_400_BAD_REQUEST)
         serializer = GameSerializer(instance)
-        return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+        return Response(serializer.data, status=status.HTTP_200_OK)
         
     
