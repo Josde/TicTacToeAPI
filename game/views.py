@@ -9,18 +9,24 @@ from .serializers import UserSerializer, GameSerializer
 from .utils import game, constants
 # Create your views here.
 
-class UserViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows users to be viewed or edited.
-    """
-    queryset = User.objects.all().order_by('-date_joined')
-    serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
-
-class GameList(APIView):
+class UserList(APIView):
     def get(self, request):
-        games = Game.objects.all()
+        users = User.objects.all().order_by('-date_joined')
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data)
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+        if (serializer.is_valid()):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+class GameList(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+    def get(self, request):
+        games = Game.objects.all().order_by('-game_id')
         serializer = GameSerializer(games, many=True)  
         return Response(serializer.data)
     
@@ -33,6 +39,7 @@ class GameList(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
         
 class GameDetail(APIView):
+    permission_classes = [permissions.IsAuthenticated]
     def get_game(self, id):
         try: 
             instance = Game.objects.get(game_id=id)
@@ -46,15 +53,16 @@ class GameDetail(APIView):
         return Response(serializer.data)
     
     def put(self, request, id):
-        
         instance = self.get_game(id)
         player = request.user
-        if (player is None or (player != instance.player_1 and player != instance.player_2) or instance.winner != 0):
+        if (not isinstance(request.user, User) or (player != instance.player_1 and player != instance.player_2) or instance.winner != 0):
             return Response(status=status.HTTP_403_FORBIDDEN)
         player_turn = 1 if player == instance.player_1 else 2
         x = request.data.get('x')
         y = request.data.get('y')
-        if (game.can_place(instance.board, x, y)):
+        if not isinstance(x, int) or not isinstance(y, int):
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        if (player_turn == instance.turn and game.can_place(instance.board, x, y)):
             piece = constants.PLAYER_1_PIECE if player_turn == 1  else constants.PLAYER_2_PIECE
             instance.board = game.place(instance.board, x, y, piece)
             winner = game.check_victory(instance.board, piece)
@@ -65,6 +73,6 @@ class GameDetail(APIView):
         else: 
             return Response(status=status.HTTP_400_BAD_REQUEST)
         serializer = GameSerializer(instance)
-        return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+        return Response(serializer.data, status=status.HTTP_200_OK)
         
     
